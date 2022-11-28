@@ -16,8 +16,8 @@ background = (180,45,190)
 
 width, height = 480,480
 
-game_display = pygame.display.set_mode((width,height))
-pygame.display.set_caption("Snake Game")
+game_display = pygame.display.set_mode((width,height)) #sets up window
+pygame.display.set_caption("The Snake Game") #name of the window
 
 clock = pygame.time.Clock()
 
@@ -35,8 +35,8 @@ def print_score(score):
     text = score_font.render("Score: " + str(score), True, orange)
     game_display.blit(text, [0,0])
 
-def food_color():
-            option = random.choice(['G', 'G','R'])
+def food_color(): #randomizes food color
+            option = random.choice(['G','G','R'])
             if option =='G':
                 return (0,255,0)
             else:
@@ -51,7 +51,7 @@ def run_game():
     game_close = False
     x = width/2
     y = height/2
-    COLOR = green
+    COLOR = green #sets the first food to be green
     x_speed= 0
     y_speed= 0
     snake_pixels = []
@@ -61,7 +61,7 @@ def run_game():
 
 
     while not game_over:
-        while game_close:
+        while game_close: #when game is over, menu shows up
             game_display.fill(black)
             game_over_message = message_font.render("GAME OVER!", True, red)
             game_display.blit(game_over_message, [width / 4, height / 3])
@@ -83,7 +83,7 @@ def run_game():
                         pygame.quit()
                         quit()
                     
-        for event in pygame.event.get():
+        for event in pygame.event.get(): #key bindings
             if event.type == pygame.QUIT:
                 game_over = True
             if event.type == pygame.KEYDOWN:
@@ -99,19 +99,19 @@ def run_game():
                 if event.key == pygame.K_DOWN:
                     x_speed = 0
                     y_speed = snake_speed
-        if x>= width or x< 0 or y >= height or y<0:
+        if x>= width or x< 0 or y >= height or y<0: #if crushes into wall
             game_close = True
         x += x_speed
         y += y_speed
         
         game_display.fill(background)
          
-        pygame.draw.rect(game_display, COLOR, [food_x, food_y,snake_size, snake_size])
+        pygame.draw.rect(game_display, COLOR, [food_x, food_y,snake_size, snake_size]) #draws food
         
         snake_pixels.append([x,y])
         
         if len(snake_pixels) > snake_length:
-            del snake_pixels[0]  #delets the last pixel when the snake moves so it satys consistent
+            del snake_pixels[0]  #delets the last pixel when the snake moves so it stays consistent
         for pixel in snake_pixels[:-1]: 
             if pixel == [x,y]:  #if the snake crushes into itself the game stops
                 game_close = True
@@ -120,19 +120,20 @@ def run_game():
         print_score(snake_length-1)
         
         
-        if x == food_x and y == food_y and COLOR ==green: #when snake gets food
+        if x == food_x and y == food_y and COLOR ==green: #when snake eats green food
             food_x = random.randint(0, GRID_WIDTH -1) * snake_size
             food_y = random.randint(0, GRID_HEIGHT -1) * snake_size
             COLOR = food_color()
             snake_length +=1 
-        if x == food_x and y == food_y and COLOR ==red: #when snake gets food
+        if x == food_x and y == food_y and COLOR ==red: #when snake eats red food
             food_x = random.randint(0, GRID_WIDTH -1) * snake_size
             food_y = random.randint(0, GRID_HEIGHT -1) * snake_size
             COLOR = food_color()
             snake_length -=1 
-            del snake_pixels[0] 
-        if snake_length <0:
-            game_close = True
+            del snake_pixels[0]
+            if snake_length <1: #if snake eats red when has only one block
+                game_close = True 
+                snake_length =1 
         clock.tick(snake_speed)
         pygame.display.update()
     pygame.quit()
