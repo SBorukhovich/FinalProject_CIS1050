@@ -9,10 +9,10 @@ white = (255,255,255)
 black = (0,0,0)
 red = (255,0,0)
 yellow = (255,255,0) 
-orange= (255,165,0)
+orange= (245, 134, 7)
 blue = (0,0,255)
 green = (0,255,0)
-background = (180,45,190)
+background = (200,200,200)
 
 width, height = 480,480
 
@@ -28,17 +28,19 @@ GRID_WIDTH = height / snake_size
 GRID_HEIGHT = width / snake_size
 
 
-message_font = pygame.font.SysFont('ubuntu',30)
-score_font =  pygame.font.SysFont('ubuntu',20)
+message_font = pygame.font.SysFont('Impact',30)
+score_font =  pygame.font.SysFont('Impact',20)
 
 def print_score(score):
     text = score_font.render("Score: " + str(score), True, orange)
     game_display.blit(text, [0,0])
 
 def food_color(): #randomizes food color
-            option = random.choice(['G','G','R'])
+            option = random.choice(['G','R', 'Y'])
             if option =='G':
                 return (0,255,0)
+            elif option =='Y':
+                return (255,255,0)
             else:
                 return (255,0,0)
     
@@ -58,17 +60,17 @@ def run_game():
     snake_length = 1
     food_x = random.randint(0, GRID_WIDTH -1) * snake_size
     food_y = random.randint(0, GRID_HEIGHT -1) * snake_size
-
+    color_changed = False
 
     while not game_over:
         while game_close: #when game is over, menu shows up
             game_display.fill(black)
             game_over_message = message_font.render("GAME OVER!", True, red)
-            game_display.blit(game_over_message, [width / 4, height / 3])
+            game_display.blit(game_over_message, [width / 4+50, height / 3])
             game_over_message2 = message_font.render("Press 1 to Exit", True, white)
-            game_display.blit(game_over_message2, [width/4,height/2])
+            game_display.blit(game_over_message2, [width/4+40,height/2])
             game_over_message3 = message_font.render("Press 2 to Restart", True, white)
-            game_display.blit(game_over_message3, [width/4,height/4*3])
+            game_display.blit(game_over_message3, [width/4+20,height/4*3-25])
             
             print_score(snake_length - 1)
             pygame.display.update()
@@ -108,6 +110,16 @@ def run_game():
          
         pygame.draw.rect(game_display, COLOR, [food_x, food_y,snake_size, snake_size]) #draws food
         
+        if COLOR == red or COLOR == yellow: #when red/yellow food appears starts timer
+            if color_changed == False:
+                old_time = pygame.time.get_ticks() #start time
+                color_changed= True
+
+            time_now = pygame.time.get_ticks()
+            if time_now>old_time+3000: #if 3 seconds passed
+                color_changed = False
+                pygame.draw.rect(game_display, green, [food_x, food_y, snake_size,snake_size])   
+                COLOR = green
         snake_pixels.append([x,y])
         
         if len(snake_pixels) > snake_length:
@@ -125,16 +137,18 @@ def run_game():
             food_y = random.randint(0, GRID_HEIGHT -1) * snake_size
             COLOR = food_color()
             snake_length +=1 
-        if x == food_x and y == food_y and COLOR ==red: #when snake eats red food
+        if x == food_x and y == food_y and COLOR == yellow: #when snake eats yellow food
             food_x = random.randint(0, GRID_WIDTH -1) * snake_size
             food_y = random.randint(0, GRID_HEIGHT -1) * snake_size
             COLOR = food_color()
             snake_length -=1 
             del snake_pixels[0]
-            if snake_length <1: #if snake eats red when has only one block
+            if snake_length <1: #if snake eats yellow when has only one block
                 game_close = True 
                 snake_length =1 
-        clock.tick(snake_speed)
+        if x == food_x and y == food_y and COLOR == red: #when red is eaten, game over
+            game_close = True
+        clock.tick(snake_speed+10)
         pygame.display.update()
     pygame.quit()
     quit()
