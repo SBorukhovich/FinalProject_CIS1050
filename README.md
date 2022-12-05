@@ -1,4 +1,4 @@
-# FinalProject_CIS1050
+# FinalProject_CIS1051
 video link  - https://youtu.be/oCqLzndFZ1g
 
 The outcome of this project is a modified snake game that includes green,yellow, and red food options. 
