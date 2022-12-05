@@ -27,11 +27,10 @@ snake_speed= 10
 GRID_WIDTH = height / snake_size
 GRID_HEIGHT = width / snake_size
 
-
 message_font = pygame.font.SysFont('Impact',30)
 score_font =  pygame.font.SysFont('Impact',20)
 
-def print_score(score):
+def print_score(score): #displays score on top left corner
     text = score_font.render("Score: " + str(score), True, orange)
     game_display.blit(text, [0,0])
 
@@ -110,16 +109,18 @@ def run_game():
          
         pygame.draw.rect(game_display, COLOR, [food_x, food_y,snake_size, snake_size]) #draws food
         
-        if COLOR == red or COLOR == yellow: #when red/yellow food appears starts timer
+        #Makes red/yellow food turn into green
+        if COLOR == red or COLOR == yellow: 
             if color_changed == False:
                 old_time = pygame.time.get_ticks() #start time
                 color_changed= True
 
-            time_now = pygame.time.get_ticks()
+            time_now = pygame.time.get_ticks() #current time
             if time_now>old_time+3000: #if 3 seconds passed
                 color_changed = False
-                pygame.draw.rect(game_display, green, [food_x, food_y, snake_size,snake_size])   
+                pygame.draw.rect(game_display, green, [food_x, food_y, snake_size,snake_size])#green appears in place 
                 COLOR = green
+                
         snake_pixels.append([x,y])
         
         if len(snake_pixels) > snake_length:
@@ -133,7 +134,7 @@ def run_game():
         
         
         if x == food_x and y == food_y and COLOR ==green: #when snake eats green food
-            food_x = random.randint(0, GRID_WIDTH -1) * snake_size
+            food_x = random.randint(0, GRID_WIDTH -1) * snake_size  #generates coordinates for new food
             food_y = random.randint(0, GRID_HEIGHT -1) * snake_size
             COLOR = food_color()
             snake_length +=1 
